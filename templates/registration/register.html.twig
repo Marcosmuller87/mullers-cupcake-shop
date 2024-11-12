@@ -1,0 +1,179 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Registro - Cupcake Shop{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .register-container {
+        max-width: 500px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+
+    .register-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .register-title {
+        color: var(--primary-color);
+        font-family: 'Pacifico', cursive;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        border: 2px solid var(--secondary-color);
+        border-radius: 8px;
+        padding: 0.8rem;
+        width: 100%;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(var(--primary-color-rgb), 0.25);
+        outline: none;
+    }
+
+    .form-label {
+        color: var(--text-color);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .register-button {
+        width: 100%;
+        padding: 0.8rem;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-weight: bold;
+        margin-top: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .register-button:hover {
+        background-color: var(--accent-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .login-link {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: var(--text-color);
+    }
+
+    .login-link a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .login-link a:hover {
+        color: var(--accent-color);
+        text-decoration: underline;
+    }
+
+    .terms-checkbox {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: var(--light-bg);
+        border-radius: 8px;
+    }
+
+    .checkbox-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .checkbox-wrapper input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    .invalid-feedback {
+        color: #dc2626;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    {% include 'partials/_header.html.twig' %}
+
+    <div class="container">
+        <div class="register-container">
+            <div class="register-header">
+                <h2 class="register-title">Criar Conta</h2>
+                <p>Junte-se a nós e descubra nossos deliciosos cupcakes!</p>
+            </div>
+
+            {{ form_start(registrationForm, {'attr': {'class': 'registration-form'}}) }}
+                <div class="form-group">
+                    {{ form_label(registrationForm.name, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.name, {'attr': {'class': 'form-control'}}) }}
+                    <div class="invalid-feedback">
+                        {{ form_errors(registrationForm.name) }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+                    <div class="invalid-feedback">
+                        {{ form_errors(registrationForm.email) }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.address, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.address, {'attr': {'class': 'form-control'}}) }}
+                    <div class="invalid-feedback">
+                        {{ form_errors(registrationForm.address) }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.plainPassword, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+                    <div class="invalid-feedback">
+                        {{ form_errors(registrationForm.plainPassword) }}
+                    </div>
+                </div>
+
+                <div class="terms-checkbox">
+                    <div class="checkbox-wrapper">
+                        {{ form_widget(registrationForm.agreeTerms) }}
+                        {{ form_label(registrationForm.agreeTerms) }}
+                    </div>
+                    <div class="invalid-feedback">
+                        {{ form_errors(registrationForm.agreeTerms) }}
+                    </div>
+                </div>
+
+                <button type="submit" class="register-button">
+                    Criar Conta
+                </button>
+            {{ form_end(registrationForm) }}
+
+            <div class="login-link">
+                <p>Já tem uma conta? <a href="{{ path('app_login') }}">Faça login aqui</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

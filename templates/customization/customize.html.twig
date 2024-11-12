@@ -1,0 +1,166 @@
+{# templates/customization/customize.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Personalizar Cupcake{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .customize-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+
+    .customize-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .product-base {
+        background-color: var(--light-bg);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+
+    .product-base h3 {
+        color: var(--primary-color);
+        margin: 0;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid var(--secondary-color);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        outline: none;
+    }
+
+    .price-summary {
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background-color: var(--light-bg);
+        border-radius: 8px;
+    }
+
+    .customize-button {
+        width: 100%;
+        padding: 1rem;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .customize-button:hover {
+        background-color: var(--accent-color);
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    {% include 'partials/_header.html.twig' with {
+        title: 'Personalizar Cupcake'
+    } %}
+
+    <div class="container">
+        <div class="customize-container">
+            <div class="product-base">
+                <h3>{{ product.name }}</h3>
+                <p class="mb-0">Preço base: R$ {{ product.price|number_format(2, ',', '.') }}</p>
+            </div>
+
+            {{ form_start(form) }}
+                <div class="form-group">
+                    {{ form_label(form.flavor) }}
+                    {{ form_widget(form.flavor, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.flavor) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.topping) }}
+                    {{ form_widget(form.topping, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.topping) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.decoration) }}
+                    {{ form_widget(form.decoration, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.decoration) }}
+                </div>
+
+                <div class="price-summary">
+                    <h4>Resumo do Pedido</h4>
+                    <div id="summary">
+                        <p>Preço base: R$ {{ product.price|number_format(2, ',', '.') }}</p>
+                        <p>Adicionais: <span id="additionalPrice">R$ 0,00</span></p>
+                        <p><strong>Total: <span id="totalPrice">R$ {{ product.price|number_format(2, ',', '.') }}</span></strong></p>
+                    </div>
+                </div>
+
+                <button type="submit" class="customize-button">
+                    Adicionar ao Carrinho
+                </button>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const basePrice = {{ product.price }};
+        const toppingSelect = document.querySelector('select[name$="[topping]"]');
+        const decorationSelect = document.querySelector('select[name$="[decoration]"]');
+
+        function calculatePrices() {
+            let additional = 0;
+
+            // Calculate topping price
+            if (toppingSelect.value === 'chocolate' || toppingSelect.value === 'cream_cheese') {
+                additional += 3.00;
+            } else if (toppingSelect.value === 'whipped_cream') {
+                additional += 2.00;
+            }
+
+            // Calculate decoration price
+            if (decorationSelect.value === 'fruits') {
+                additional += 4.00;
+            } else if (['sprinkles', 'confetti'].includes(decorationSelect.value)) {
+                additional += 2.00;
+            }
+
+            document.getElementById('additionalPrice').textContent = 
+                'R$ ' + additional.toFixed(2).replace('.', ',');
+            document.getElementById('totalPrice').textContent = 
+                'R$ ' + (basePrice + additional).toFixed(2).replace('.', ',');
+        }
+
+        toppingSelect.addEventListener('change', calculatePrices);
+        decorationSelect.addEventListener('change', calculatePrices);
+    });
+</script>
+{% endblock %}

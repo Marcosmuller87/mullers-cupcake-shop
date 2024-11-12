@@ -1,0 +1,256 @@
+:root {
+    --primary-color: #6b4423;     /* Rich Brown */
+    --secondary-color: #d4a373;   /* Soft Caramel */
+    --accent-color: #ccd5ae;      /* Sage Green */
+    --text-color: #463f3a;        /* Dark Gray-Brown */
+    --light-bg: #fefae0;          /* Cream */
+}
+
+html, body { 
+    margin-bottom: 0 !important; 
+}
+
+.cupcake-header {
+    background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.header-title {
+    color: var(--accent-color);
+    font-size: 2.5rem;
+    font-family: 'Pacifico', cursive;
+    margin: 0;
+}
+
+.header-nav {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+a.header-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: var(--accent-color) !important; /* Added !important */
+    border: 2px solid var(--accent-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+a.header-button i {
+    color: inherit;
+}
+
+.welcome-section {
+    text-align: center;
+    padding: 3rem 0;
+    background-color: var(--light-bg);
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.welcome-title {
+    color: var(--accent-color);
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    font-family: 'Pacifico', cursive;
+}
+
+.user-info {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    border: 2px solid var(--secondary-color);
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.cupcake-btn {
+    padding: 0.8rem 2rem;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.cupcake-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.cupcake-btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+}
+
+.cupcake-btn-secondary {
+    background-color: var(--secondary-color);
+    border: none;
+    color: var(--text-color);
+}
+
+.cupcake-btn-danger {
+    background-color: #ff4081;
+    border: none;
+    color: white;
+}
+
+/* Modal styles */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.modal-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 90%;
+    z-index: 1001;
+}
+
+.modal-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.modal-title {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.modal-message {
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.modal-btn {
+    padding: 0.8rem 2rem;
+    border-radius: 25px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-btn:hover {
+    transform: translateY(-2px);
+}
+
+.modal-btn-confirm {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.modal-btn-cancel {
+    background-color: #6c757d;
+    color: white;
+}
+
+.header-button {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    padding: 0.25em 0.6em;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 50%;
+    background-color: #dc3545;
+    color: white;
+}
+
+.badge:empty {
+    display: none;
+}
+
+.position-absolute {
+    position: absolute !important;
+}
+
+.top-0 {
+    top: 0 !important;
+}
+
+.start-100 {
+    left: 100% !important;
+}
+
+.translate-middle {
+    transform: translate(-50%, -50%) !important;
+}
+
+.rounded-pill {
+    border-radius: 50rem !important;
+}
+
+.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}

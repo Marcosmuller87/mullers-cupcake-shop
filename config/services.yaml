@@ -1,15 +1,10 @@
-# This file is the entry point to configure your own services.
-# Files in the packages/ subdirectory configure your dependencies.
-
-# Put parameters here that don't need to change on each machine where the app is deployed
-# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
-parameters:
-
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $uploadsDirectory: '%kernel.project_dir%/public/uploads/products'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -20,5 +15,24 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    # add this explicitly
+    App\Service\FileUploader:
+        arguments:
+            $targetDirectory: '%kernel.project_dir%/public/uploads/products'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    # Make CartRepository available in all templates
+    App\Repository\CartRepository:
+        tags: ['twig.runtime']
+    
+    # Add this to make the repository available as a global Twig variable
+    App\Twig\CartExtension:
+        tags: ['twig.extension']
+
+parameters:
+    uploads_directory: '%kernel.project_dir%/public/uploads/products'

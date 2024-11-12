@@ -1,0 +1,182 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar Produto - Muller's Cupcake Shop{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .edit-container {
+        padding: 2rem 0;
+    }
+
+    .form-container {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        color: var(--primary-color);
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid var(--secondary-color);
+        border-radius: 25px;
+        font-size: 1rem;
+    }
+
+    .image-upload {
+        margin-bottom: 1.5rem;
+    }
+
+    .image-upload label {
+        display: block;
+        color: var(--primary-color);
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .image-preview {
+        margin-top: 1rem;
+        max-width: 200px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .image-preview img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 2rem;
+    }
+
+    .back-link {
+        color: var(--text-color);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+        color: var(--primary-color);
+        transform: translateX(-5px);
+    }
+
+    .flash-message {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .flash-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .flash-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    {% include 'partials/_header.html.twig' with {
+        title: 'Editar Produto'
+    } %}
+
+    <div class="container edit-container">
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="flash-message flash-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="form-container">
+            {{ form_start(form) }}
+                <div class="form-group">
+                    {{ form_label(form.name, 'Nome do Produto') }}
+                    {{ form_widget(form.name, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Digite o nome do produto'
+                        }
+                    }) }}
+                    {{ form_errors(form.name) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.description, 'Descrição') }}
+                    {{ form_widget(form.description, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Descreva o produto'
+                        }
+                    }) }}
+                    {{ form_errors(form.description) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.price, 'Preço') }}
+                    {{ form_widget(form.price, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': '0.00'
+                        }
+                    }) }}
+                    {{ form_errors(form.price) }}
+                </div>
+
+                <div class="image-upload">
+                    {{ form_label(form.imageFile, 'Imagem do Produto') }}
+                    {{ form_widget(form.imageFile, {
+                        'attr': {
+                            'class': 'form-control',
+                            'accept': 'image/*'
+                        }
+                    }) }}
+                    {{ form_errors(form.imageFile) }}
+                    
+                    {% if product.image %}
+                        <div class="image-preview">
+                            <img src="{{ asset('uploads/products/' ~ product.image) }}" alt="{{ product.name }}">
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-actions">
+                    <a href="{{ path('product_index') }}" class="back-link">
+                        ← Voltar à lista de produtos
+                    </a>
+                    <button type="submit" class="cupcake-btn cupcake-btn-primary">
+                        Salvar Alterações
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

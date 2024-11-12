@@ -1,0 +1,169 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Carrinho - Muller's Cupcake Shop{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .cart-container {
+        padding: 2rem 0;
+    }
+
+    .cart-table {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .cart-table th {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 1rem;
+        text-align: left;
+    }
+
+    .cart-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--light-bg);
+    }
+
+    .quantity-input {
+        width: 80px;
+        padding: 0.5rem;
+        border: 1px solid var(--secondary-color);
+        border-radius: 20px;
+        text-align: center;
+    }
+
+    .cart-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+    }
+
+    .empty-cart-message {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 10px;
+        margin: 2rem 0;
+    }
+
+    .customization-details {
+        font-size: 0.9rem;
+        color: var(--text-color);
+        margin-top: 0.5rem;
+    }
+
+    .update-btn {
+        padding: 0.5rem 1rem;
+        background-color: var(--secondary-color);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        margin-left: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .update-btn:hover {
+        background-color: var(--accent-color);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    {% include 'partials/_header.html.twig' with {
+        title: 'Meu Carrinho'
+    } %}
+
+    <div class="container cart-container">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% if cart.items|length > 0 %}
+            <div class="cart-table">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Personalização</th>
+                            <th>Preço</th>
+                            <th>Quantidade</th>
+                            <th>Subtotal</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart.items %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>
+                                    {% if item.customization %}
+                                        <div class="customization-details">
+                                            <div>Cobertura: {{ item.customization.topping|title }}</div>
+                                            <div>Decoração: {{ item.customization.decoration|title }}</div>
+                                            <div>Custo adicional: R$ {{ item.customization.priceIncrement|number_format(2, ',', '.') }}</div>
+                                        </div>
+                                    {% else %}
+                                        Padrão
+                                    {% endif %}
+                                </td>
+                                <td>R$ {{ item.price|number_format(2, ',', '.') }}</td>
+                                <td>
+                                    <form action="{{ path('cart_update_quantity', {'id': item.id}) }}" method="POST" class="d-flex align-items-center">
+                                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="quantity-input">
+                                        <button type="submit" class="update-btn">Atualizar</button>
+                                    </form>
+                                </td>
+                                <td>R$ {{ item.subtotal|number_format(2, ',', '.') }}</td>
+                                <td>
+                                    <form action="{{ path('cart_remove_item', {'id': item.id}) }}" method="POST">
+                                        <button type="submit" class="cupcake-btn cupcake-btn-danger">Remover</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" class="text-right"><strong>Total:</strong></td>
+                            <td colspan="2"><strong>R$ {{ cart.totalPrice|number_format(2, ',', '.') }}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="cart-actions">
+                <form action="{{ path('cart_clear') }}" method="POST">
+                    <button type="submit" class="cupcake-btn cupcake-btn-danger">
+                        Limpar Carrinho
+                    </button>
+                </form>
+                <form action="{{ path('cart_checkout') }}" method="POST">
+                    <button type="submit" class="cupcake-btn cupcake-btn-primary">
+                        Finalizar Compra
+                    </button>
+                </form>
+            </div>
+        {% else %}
+            <div class="empty-cart-message">
+                <h2>Seu carrinho está vazio</h2>
+                <p>Que tal adicionar alguns cupcakes deliciosos?</p>
+                <a href="{{ path('product_index') }}" class="cupcake-btn cupcake-btn-primary mt-3">
+                    Continuar Comprando
+                </a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

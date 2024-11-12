@@ -1,7 +1,8 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
-    #csrf_protection: true
+    csrf_protection:
+        enabled: true
     http_method_override: false
 
     # Enables session support. Note that the session will ONLY be started if you read or write from it.
@@ -14,8 +15,21 @@ framework:
 
     #esi: true
     #fragments: true
+
     php_errors:
         log: true
+
+    # Added form configuration
+    form:
+        enabled: true
+        csrf_protection:
+            enabled: true
+            field_name: _token
+
+    # Added validation configuration
+    validation:
+        enabled: true
+        enable_annotations: true
 
 when@test:
     framework:

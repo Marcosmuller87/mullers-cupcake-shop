@@ -1,0 +1,57 @@
+{# templates/home/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Muller's Cupcake Shop - Página Inicial{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .featured-section {
+        padding: 2rem;
+        background-color: white;
+        border-radius: 10px;
+        margin-top: 2rem;
+    }
+
+    .welcome-message {
+        font-size: 1.2rem;
+        color: var(--text-color);
+        line-height: 1.6;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    {% include 'partials/_header.html.twig' %}
+
+    <div class="container">
+        <section class="welcome-section">
+            {% if app.user %}
+                <div class="user-info">
+                    <h2>Olá, {{ app.user.name ?? app.user.email }}!</h2>
+                    <p class="welcome-message">Que bom ter você de volta! Explore nossos deliciosos cupcakes.</p>
+                    <div class="auth-buttons">
+                        <a href="{{ path('app_logout') }}" class="cupcake-btn cupcake-btn-danger">Sair</a>
+                        <a href="{{ path('product_index') }}" class="cupcake-btn cupcake-btn-primary">Ver Catálogo</a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="welcome-message">
+                    <h2>Bem-vindo à nossa doce loja!</h2>
+                    <p>Descubra os mais deliciosos cupcakes artesanais.</p>
+                    <div class="auth-buttons">
+                        <a href="{{ path('app_login') }}" class="cupcake-btn cupcake-btn-primary">Login</a>
+                        <a href="{{ path('app_register') }}" class="cupcake-btn cupcake-btn-secondary">Registrar</a>
+                    </div>
+                </div>
+            {% endif %}
+        </section>
+
+        <section class="featured-section">
+            <h3 class="text-center mb-4">Destaques da Semana</h3>
+            <div class="row">
+                <!-- Add featured products here when ready -->
+                <p class="text-center">Em breve, novidades deliciosas!</p>
+            </div>
+        </section>
+    </div>
+{% endblock %}
