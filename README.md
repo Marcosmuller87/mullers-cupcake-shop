@@ -21,8 +21,8 @@ Uma aplicação web Symfony para uma loja de cupcakes com autenticação de usu�
 
 1. Clone o repositório
 ```bash
-git clone [seu-repositório-url]
-cd cupcake-shop
+git clone https://github.com/Marcosmuller87/mullers-cupcake-shop
+cd mullers-cupcake-shop
 ```
 
 2. Instale as dependências
