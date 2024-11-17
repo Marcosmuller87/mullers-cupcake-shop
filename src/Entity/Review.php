@@ -17,8 +17,8 @@ class Review
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'reviews')]
+    #[ORM\JoinColumn(nullable: true, onDelete: "CASCADE")]
     private ?Product $product = null;
 
     #[ORM\Column]

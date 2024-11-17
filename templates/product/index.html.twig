@@ -172,9 +172,14 @@
                                         Excluir
                                     </button>
                                 {% else %}
-                                    <a href="{{ path('product_customize', {'id': product.id}) }}" class="btn-edit">
-                                        Personalizar
-                                    </a>
+                                    <div class="product-actions">
+                                        <a href="{{ path('product_show', {'id': product.id}) }}" class="btn-edit">
+                                            Ver Detalhes
+                                        </a>
+                                        <a href="{{ path('product_customize', {'id': product.id}) }}" class="btn-edit">
+                                            Personalizar
+                                        </a>
+                                    </div>
                                 {% endif %}
                             </div>
                         </div>

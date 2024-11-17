@@ -1,0 +1,195 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Detalhes do Pedido #{{ order.id }} - Muller's Cupcake Shop{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .order-details-container {
+        padding: 2rem 0;
+    }
+
+    .order-card {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--secondary-color);
+    }
+
+    .customer-info {
+        margin-bottom: 2rem;
+    }
+
+    .info-label {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .items-table {
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+
+    .items-table th {
+        background-color: var(--light-bg);
+        padding: 1rem;
+        text-align: left;
+    }
+
+    .items-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--light-bg);
+    }
+
+    .status-form {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--secondary-color);
+    }
+
+    .status-select {
+        padding: 0.5rem;
+        border: 1px solid var(--secondary-color);
+        border-radius: 20px;
+        margin-right: 1rem;
+    }
+
+    .update-status-btn {
+        padding: 0.5rem 1rem;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .update-status-btn:hover {
+        background-color: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    .back-link {
+        display: inline-block;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+        text-decoration: none;
+    }
+
+    .back-link:hover {
+        color: var(--primary-color);
+    }
+
+    .customization-details {
+        font-size: 0.9rem;
+        color: var(--text-color);
+        margin-top: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    {% include 'partials/_header.html.twig' with {
+        title: 'Detalhes do Pedido #' ~ order.id
+    } %}
+
+    <div class="container order-details-container">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <a href="{{ path('admin_order_index') }}" class="back-link">
+            ← Voltar para lista de pedidos
+        </a>
+
+        <div class="order-card">
+            <div class="order-header">
+                <div>
+                    <h2>Pedido #{{ order.id }}</h2>
+                    <p>{{ order.createdAt|date('d/m/Y H:i') }}</p>
+                </div>
+                <span class="order-status status-{{ order.status }}">
+                    {% if order.status == 'pending' %}
+                        Pendente
+                    {% elseif order.status == 'processing' %}
+                        Em Processamento
+                    {% elseif order.status == 'completed' %}
+                        Concluído
+                    {% else %}
+                        Cancelado
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="customer-info">
+                <h3>Informações do Cliente</h3>
+                <p><span class="info-label">Nome:</span> {{ order.user.name }}</p>
+                <p><span class="info-label">Email:</span> {{ order.user.email }}</p>
+            </div>
+
+            <h3>Itens do Pedido</h3>
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Personalização</th>
+                        <th>Quantidade</th>
+                        <th>Preço</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.orderItems %}
+                        <tr>
+                            <td>{{ item.product.displayName }}</td>
+                            <td>
+                                {% if item.customization %}
+                                    <div class="customization-details">
+                                        <div>Cobertura: {{ item.customization.topping|title }}</div>
+                                        <div>Decoração: {{ item.customization.decoration|title }}</div>
+                                        <div>Custo adicional: R$ {{ item.customization.priceIncrement|number_format(2, ',', '.') }}</div>
+                                    </div>
+                                {% else %}
+                                    Padrão
+                                {% endif %}
+                            </td>
+                            <td>{{ item.quantity }}</td>
+                            <td>R$ {{ item.product.displayPrice|number_format(2, ',', '.') }}</td>
+                            <td>R$ {{ item.subtotal|number_format(2, ',', '.') }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="text-right"><strong>Total:</strong></td>
+                        <td><strong>R$ {{ order.totalPrice|number_format(2, ',', '.') }}</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div class="status-form">
+                <form action="{{ path('admin_order_update_status', {'id': order.id}) }}" method="POST">
+                    <select name="status" class="status-select">
+                        <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pendente</option>
+                        <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>Em Processamento</option>
+                        <option value="completed" {% if order.status == 'completed' %}selected{% endif %}>Concluído</option>
+                        <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelado</option>
+                    </select>
+                    <button type="submit" class="update-status-btn">Atualizar Status</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

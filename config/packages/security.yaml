@@ -25,7 +25,7 @@ security:
             remember_me:
                 secret: '%kernel.secret%'    # required
                 lifetime: 604800            # 1 week in seconds
-                remember_me_parameter: _remember_me
+                remember_me_parameter: _remember_me  # Changed this line
                 always_remember_me: false
                 signature_properties: [password]
    
@@ -54,6 +54,7 @@ security:
         # Cart and order routes
         - { path: ^/cart, roles: [ROLE_USER, '!ROLE_ADMIN'] }
         - { path: ^/order, roles: ROLE_USER }
+        - { path: ^/order/confirmation/, roles: ROLE_USER }
        
         # Customization routes
         - { path: ^/customize, roles: ROLE_USER }

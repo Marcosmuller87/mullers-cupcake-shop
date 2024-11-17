@@ -163,17 +163,15 @@
                 </div>
 
                 <div class="form-group">
-                    {{ form_label(form.price, 'Preço') }}
-                    <div class="price-input">
-                        {{ form_widget(form.price, {
-                            'attr': {
-                                'class': 'form-control',
-                                'placeholder': '0.00'
-                            }
-                        }) }}
-                    </div>
-                    {{ form_errors(form.price) }}
-                </div>
+    {{ form_label(form.price, 'Preço') }}
+    {{ form_widget(form.price, {
+        'attr': {
+            'class': 'form-control',
+            'placeholder': '0.00'
+        }
+    }) }}
+    {{ form_errors(form.price) }}
+</div>
 
                 <div class="image-upload">
                     {{ form_label(form.imageFile, 'Imagem do Produto') }}

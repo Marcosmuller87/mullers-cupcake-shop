@@ -17,7 +17,7 @@ class CartItem
     #[ORM\JoinColumn(nullable: false)]
     private ?Cart $cart = null;
 
-    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: "cartItems")]
     #[ORM\JoinColumn(nullable: false)]
     private ?Product $product = null;
 
@@ -55,7 +55,7 @@ class CartItem
     {
         $this->product = $product;
         if ($product) {
-            $this->price = (string) $product->getPrice();
+            $this->price = (string) $product->getDisplayPrice();
         }
         return $this;
     }

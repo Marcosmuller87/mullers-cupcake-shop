@@ -1,0 +1,219 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }} - Muller's Cupcake Shop{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .review-section {
+        background: white;
+        border-radius: 10px;
+        padding: 2rem;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        margin-top: 2rem;
+    }
+
+    .review-form {
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--secondary-color);
+    }
+
+    .star-rating {
+        display: inline-flex;
+        flex-direction: row-reverse;
+        gap: 0.5rem;
+        margin: 1rem 0;
+    }
+
+    .star-rating input[type="radio"] {
+        display: none;
+    }
+
+    .star-rating label {
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #ddd;
+        transition: all 0.2s ease;
+    }
+
+    .star-rating input[type="radio"]:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color: var(--secondary-color);
+    }
+
+    .review-list {
+        margin-top: 2rem;
+    }
+
+    .review-item {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--secondary-color);
+    }
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .review-user {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .review-date {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .review-rating {
+        font-size: 1.2rem;
+        margin: 0.5rem 0;
+    }
+
+    .review-rating .star {
+        color: #ddd;
+    }
+
+    .review-rating .star.filled {
+        color: var(--secondary-color);
+    }
+
+    .review-comment {
+        color: var(--text-color);
+        line-height: 1.5;
+    }
+
+    .review-submit-btn {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 25px;
+        border: none;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .review-submit-btn:hover {
+        background-color: var(--secondary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .comment-textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid var(--secondary-color);
+        border-radius: 10px;
+        margin: 1rem 0;
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .comment-textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 2px rgba(107, 68, 35, 0.1);
+    }
+
+    .rating-label {
+        font-weight: bold;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .no-reviews {
+        text-align: center;
+        padding: 2rem;
+        color: #666;
+        font-style: italic;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    {% include 'partials/_header.html.twig' %}
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="product-info-card">
+                    <h2 class="product-title">{{ product.name }}</h2>
+                    <p class="product-description">{{ product.description }}</p>
+                    <p class="product-price">R$ {{ product.price|number_format(2, ',', '.') }}</p>
+                    
+                    <div class="mt-3">
+                        <a href="{{ path('product_customize', {'id': product.id}) }}" class="cupcake-btn cupcake-btn-primary">
+                            Personalizar
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="review-section">
+                    <h3>Avaliações</h3>
+
+                    {% if is_granted('ROLE_USER') %}
+                        {% set userReview = null %}
+                        {% for review in reviews %}
+                            {% if review.user.id == app.user.id %}
+                                {% set userReview = review %}
+                            {% endif %}
+                        {% endfor %}
+
+                        <div class="review-form">
+                            <form action="{{ path('review_add', {'id': product.id}) }}" method="post">
+                                <div class="form-group">
+                                    <label class="rating-label">Sua Avaliação:</label>
+                                    <div class="star-rating">
+                                        {% for i in 5..1 %}
+                                            <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" required
+                                                {% if userReview and userReview.rating == i %}checked="checked"{% endif %}>
+                                            <label for="star{{ i }}">★</label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="rating-label" for="comment">Seu Comentário:</label>
+                                    <textarea class="comment-textarea" id="comment" name="comment" required>{{ userReview ? userReview.comment : '' }}</textarea>
+                                </div>
+
+                                <button type="submit" class="review-submit-btn">
+                                    {{ userReview ? 'Atualizar Avaliação' : 'Enviar Avaliação' }}
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+
+                    <div class="review-list">
+                        {% if reviews|length > 0 %}
+                            {% for review in reviews %}
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <span class="review-user">{{ review.user.name }}</span>
+                                        <span class="review-date">{{ review.createdAt|date('d/m/Y H:i') }}</span>
+                                    </div>
+                                    <div class="review-rating">
+                                        {% for i in 1..5 %}
+                                            <span class="star {% if i <= review.rating %}filled{% endif %}">★</span>
+                                        {% endfor %}
+                                    </div>
+                                    <p class="review-comment">{{ review.comment }}</p>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="no-reviews">Ainda não há avaliações para este produto.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

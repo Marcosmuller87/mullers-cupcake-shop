@@ -12,8 +12,12 @@ services:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
-            - '../src/Entity/'
             - '../src/Kernel.php'
+
+    # Register entities as services
+    App\Entity\:
+        resource: '../src/Entity/'
+        tags: ['doctrine.repository_service']
 
     # add this explicitly
     App\Service\FileUploader:

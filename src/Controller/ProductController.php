@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use App\Entity\Product;
+use App\Entity\Review;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,7 +39,10 @@ class ProductController extends AbstractController
     #[Route('/product', name: 'product_index')]
     public function index(): Response
     {
-        $products = $this->productRepository->findAll();
+        $products = $this->isGranted('ROLE_ADMIN') 
+            ? $this->productRepository->findAllIncludingDeleted()
+            : $this->productRepository->findAllActive();
+            
         return $this->render('product/index.html.twig', [
             'products' => $products,
         ]);
@@ -129,30 +133,51 @@ class ProductController extends AbstractController
         ]);
     }
 
-    #[Route('/product/{id}', name: 'product_delete', methods: ['POST'])]
+    #[Route('/product/{id}/delete', name: 'product_delete', methods: ['POST'])]
     public function delete(Request $request, int $id): Response
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
-            throw $this->createAccessDeniedException('Você precisa ser um administrador para realizar esta ação.');
+            throw $this->createAccessDeniedException();
         }
 
         $product = $this->productRepository->find($id);
-       
+        if (!$product) {
+            throw $this->createNotFoundException();
+        }
+
+        if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
+            try {
+                // Instead of removing, we'll soft delete
+                $product->setIsActive(false);
+                $product->setDeletedAt(new \DateTime());
+                
+                $this->entityManager->flush();
+                
+                $this->addFlash('success', 'Produto removido com sucesso!');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Ocorreu um erro ao tentar remover o produto.');
+            }
+        }
+
+        return $this->redirectToRoute('product_index');
+    }
+
+    #[Route('/product/{id}/show', name: 'product_show', methods: ['GET'])]
+    public function show(int $id): Response
+    {
+        $product = $this->productRepository->find($id);
+        
         if (!$product) {
             throw $this->createNotFoundException('Produto não encontrado');
         }
 
-        if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
-            if ($product->getImage()) {
-                $this->fileUploader->remove($product->getImage());
-            }
+        $reviews = $this->entityManager
+            ->getRepository(Review::class)
+            ->findBy(['product' => $product], ['createdAt' => 'DESC']);
 
-            $this->entityManager->remove($product);
-            $this->entityManager->flush();
-           
-            $this->addFlash('success', 'Produto removido com sucesso!');
-        }
-
-        return $this->redirectToRoute('product_index');
+        return $this->render('product/show.html.twig', [
+            'product' => $product,
+            'reviews' => $reviews
+        ]);
     }
 }

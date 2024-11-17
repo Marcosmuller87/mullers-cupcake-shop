@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Pedido Confirmado - Muller's Cupcake Shop{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .confirmation-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    }
+
+    .confirmation-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .confirmation-header h2 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .order-details {
+        margin-top: 2rem;
+        padding: 1rem;
+        background: var(--light-bg);
+        border-radius: 8px;
+    }
+
+    .order-number {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .item-list {
+        margin-top: 1.5rem;
+    }
+
+    .item-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--secondary-color);
+    }
+
+    .total-row {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px solid var(--primary-color);
+        font-weight: bold;
+    }
+
+    .thank-you-message {
+        text-align: center;
+        margin-top: 2rem;
+        color: var(--text-color);
+    }
+
+    .continue-shopping {
+        display: block;
+        width: fit-content;
+        margin: 2rem auto;
+        padding: 0.8rem 2rem;
+        background-color: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+    }
+
+    .continue-shopping:hover {
+        background-color: var(--secondary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+    {% include 'partials/_header.html.twig' %}
+
+    <div class="container">
+        <div class="confirmation-container">
+            <div class="confirmation-header">
+                <h2>Pedido Confirmado!</h2>
+                <p>Obrigado por comprar conosco!</p>
+            </div>
+
+            <div class="order-details">
+                <p>Número do Pedido: <span class="order-number">#{{ order.id }}</span></p>
+                <p>Data: {{ order.createdAt|date('d/m/Y H:i') }}</p>
+
+                <div class="item-list">
+                    {% for item in order.orderItems %}
+                        <div class="item-row">
+                            <div>
+                                <td>{{ item.product.displayName }}</td>
+                                {% if item.customization %}
+                                    <small>
+                                        ({{ item.customization.topping|title }}, 
+                                        {{ item.customization.decoration|title }})
+                                    </small>
+                                {% endif %}
+                                x {{ item.quantity }}
+                            </div>
+                            <div>R$ {{ item.subtotal|number_format(2, ',', '.') }}</div>
+                        </div>
+                    {% endfor %}
+
+                    <div class="item-row total-row">
+                        <div>Total</div>
+                        <div>R$ {{ order.totalPrice|number_format(2, ',', '.') }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="thank-you-message">
+                <p>Em breve você receberá um e-mail com os detalhes do seu pedido.</p>
+                <p>Esperamos que você aproveite seus deliciosos cupcakes!</p>
+            </div>
+
+            <a href="{{ path('product_index') }}" class="continue-shopping">
+                Continuar Comprando
+            </a>
+        </div>
+    </div>
+{% endblock %}

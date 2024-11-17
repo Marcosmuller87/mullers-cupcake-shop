@@ -145,14 +145,20 @@ class CartController extends AbstractController
             return $this->redirectToRoute('cart_index');
         }
 
-        $order = $cart->convertToOrder();
-        
-        $this->entityManager->persist($order);
-        $this->entityManager->remove($cart);
-        $this->entityManager->flush();
+        try {
+            $order = $cart->convertToOrder();
+            
+            $this->entityManager->persist($order);
+            $this->entityManager->remove($cart);
+            $this->entityManager->flush();
 
-        $this->addFlash('success', 'Pedido realizado com sucesso!');
-        return $this->redirectToRoute('order_confirmation', ['id' => $order->getId()]);
+            return $this->redirectToRoute('order_confirmation', [
+                'id' => $order->getId()
+            ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Ocorreu um erro ao processar seu pedido. Por favor, tente novamente.');
+            return $this->redirectToRoute('cart_index');
+        }
     }
 
     #[Route('/clear', name: 'cart_clear', methods: ['POST'])]

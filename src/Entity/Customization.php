@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\CustomizationRepository;
@@ -26,8 +25,8 @@ class Customization
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $priceIncrement = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: "SET NULL")]
     private ?Product $product = null;
 
     public function getId(): ?int
@@ -43,7 +42,6 @@ class Customization
     public function setFlavor(string $flavor): static
     {
         $this->flavor = $flavor;
-
         return $this;
     }
 
@@ -55,7 +53,6 @@ class Customization
     public function setTopping(string $topping): static
     {
         $this->topping = $topping;
-
         return $this;
     }
 
@@ -67,7 +64,6 @@ class Customization
     public function setDecoration(string $decoration): static
     {
         $this->decoration = $decoration;
-
         return $this;
     }
 
@@ -79,7 +75,6 @@ class Customization
     public function setPriceIncrement(string $priceIncrement): static
     {
         $this->priceIncrement = $priceIncrement;
-
         return $this;
     }
 
@@ -91,7 +86,6 @@ class Customization
     public function setProduct(?Product $product): static
     {
         $this->product = $product;
-
         return $this;
     }
 }

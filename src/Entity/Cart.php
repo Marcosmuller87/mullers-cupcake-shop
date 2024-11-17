@@ -105,13 +105,18 @@ class Cart
         $order->setUser($this->user);
         $order->setTotalPrice($this->totalPrice);
         $order->setStatus('pending');
-        $order->setCreatedAt(new \DateTimeImmutable());
-
+        
         foreach ($this->items as $cartItem) {
             $orderItem = new OrderItem();
             $orderItem->setProduct($cartItem->getProduct());
             $orderItem->setQuantity($cartItem->getQuantity());
             $orderItem->setPrice($cartItem->getPrice());
+            
+            if ($cartItem->getCustomization()) {
+                $orderItem->setCustomization($cartItem->getCustomization());
+            }
+            
+            $orderItem->setOrderReference($order);
             $order->addOrderItem($orderItem);
         }
 

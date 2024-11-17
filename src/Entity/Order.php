@@ -17,7 +17,7 @@ class Order
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'orders')]
+    #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
@@ -30,12 +30,14 @@ class Order
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'orderReference', targetEntity: OrderItem::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'orderReference', targetEntity: OrderItem::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $orderItems;
 
     public function __construct()
     {
         $this->orderItems = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->status = 'pending';
     }
 
     public function getId(): ?int
@@ -51,7 +53,6 @@ class Order
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 
@@ -63,7 +64,6 @@ class Order
     public function setTotalPrice(string $totalPrice): static
     {
         $this->totalPrice = $totalPrice;
-
         return $this;
     }
 
@@ -75,7 +75,6 @@ class Order
     public function setStatus(string $status): static
     {
         $this->status = $status;
-
         return $this;
     }
 
@@ -87,7 +86,6 @@ class Order
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
@@ -99,22 +97,21 @@ class Order
         return $this->orderItems;
     }
 
-    public function addOrderItem(OrderItem $orderItem): static
+    public function addOrderItem(OrderItem $item): self
     {
-        if (!$this->orderItems->contains($orderItem)) {
-            $this->orderItems->add($orderItem);
-            $orderItem->setOrderReference($this);
+        if (!$this->orderItems->contains($item)) {
+            $this->orderItems->add($item);
+            $item->setOrderReference($this);
         }
-
         return $this;
     }
 
-    public function removeOrderItem(OrderItem $orderItem): static
+    public function removeOrderItem(OrderItem $item): static
     {
-        if ($this->orderItems->removeElement($orderItem)) {
+        if ($this->orderItems->removeElement($item)) {
             // set the owning side to null (unless already changed)
-            if ($orderItem->getOrderReference() === $this) {
-                $orderItem->setOrderReference(null);
+            if ($item->getOrderReference() === $this) {
+                $item->setOrderReference(null);
             }
         }
 

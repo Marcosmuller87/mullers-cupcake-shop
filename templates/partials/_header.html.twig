@@ -27,6 +27,11 @@
                     {% endif %}
                 </a>
             {% endif %}
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('admin_order_index') }}" class="header-button" title="Gerenciar Pedidos">
+                    <i class="fas fa-clipboard-list"></i>
+                </a>
+            {% endif %}
             <a href="{{ path('app_logout') }}" class="header-button" onclick="showLogoutModal(); return false;">
                 <i class="fas fa-sign-out-alt"></i>
             </a>
