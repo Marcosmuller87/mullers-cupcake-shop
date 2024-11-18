@@ -1,0 +1,10 @@
+[build]
+builder = "nixpacks"
+buildCommand = "composer install"
+
+[deploy]
+startCommand = "php -S 0.0.0.0:$PORT -t public/"
+restartPolicyType = "ON_FAILURE"
+
+[env]
+PHP_VERSION = "8.0"
