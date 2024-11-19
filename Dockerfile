@@ -27,10 +27,11 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
-# Install dependencies and Symfony
+# Install Symfony Runtime first
+RUN composer require symfony/runtime
+
+# Then install other dependencies
 RUN composer install --no-scripts --no-dev
-RUN php bin/console cache:clear --no-warmup
-RUN php bin/console cache:warmup
 
 # Apache config
 COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
