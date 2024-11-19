@@ -1,0 +1,23 @@
+name: app
+type: php:8.2
+relationships:
+    database: "database:mysql"
+web:
+    locations:
+        "/":
+            root: "public"
+            expires: -1
+            passthru: "/index.php"
+disk: 2048
+hooks:
+    build: |
+        set -e
+        composer install --no-dev --optimize-autoloader
+        php bin/console assets:install --no-debug
+        php bin/console cache:clear
+    deploy: |
+        set -e
+        php bin/console doctrine:migrations:migrate --no-interaction
+mounts:
+    "/var": { source: local, source_path: var }
+    "/public/uploads": { source: local, source_path: uploads }
