@@ -27,15 +27,18 @@ WORKDIR /var/www/html
 # Copy project files
 COPY . .
 
-# Install dependencies
-RUN composer install
+# Install dependencies and Symfony
+RUN composer install --no-scripts --no-dev
+RUN php bin/console cache:clear --no-warmup
+RUN php bin/console cache:warmup
 
 # Apache config
 COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/var
 
 EXPOSE 80
 
