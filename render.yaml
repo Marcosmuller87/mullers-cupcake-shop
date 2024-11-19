@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: mullers-cupcake-shop
+    env: docker
+    buildCommand: |
+      mkdir -p docker/apache/
+      echo '<VirtualHost *:80>
+        DocumentRoot /var/www/html/public
+        <Directory /var/www/html/public>
+            AllowOverride All
+            Order Allow,Deny
+            Allow from All
+            Require all granted
+            FallbackResource /index.php
+        </Directory>
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+      </VirtualHost>' > docker/apache/000-default.conf
+    startCommand: "apache2-foreground"
+    envVars:
+      - key: APP_ENV
+        value: prod
+      - key: APP_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+
+databases:
+  - name: mullers-cupcake-shop-db
+    databaseName: cupcakeshop
+    ipAllowList: []
