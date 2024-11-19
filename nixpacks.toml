@@ -1,8 +1,0 @@
-[phases.setup]
-nixPkgs = ['php82']
-
-[phases.build]
-cmds = ['composer install --no-dev']
-
-[start]
-cmd = "php bin/console server:start"
