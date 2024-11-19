@@ -21,18 +21,24 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 # Get Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Create non-root user
+RUN useradd -G www-data,root -u 1000 -d /home/symfony symfony
+RUN mkdir -p /home/symfony/.composer && \
+    chown -R symfony:symfony /home/symfony
+
 # Set working directory
 WORKDIR /var/www/html
 
 # Copy project files
-COPY . .
+COPY --chown=symfony:symfony . .
 
-# Install Symfony Runtime first
-RUN composer require symfony/runtime
+# Switch to non-root user
+USER symfony
 
-# Then install other dependencies
+# Install dependencies
 RUN composer install --no-scripts --no-dev
 
+USER root
 # Apache config
 COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
