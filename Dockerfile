@@ -22,24 +22,24 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy files
+# Copy composer files first
+COPY composer.json composer.lock ./
+
+# Install dependencies
+RUN composer install --no-scripts --no-autoloader --no-dev
+
+# Copy rest of the application
 COPY . .
 
-# Create var directory with permissions
-RUN mkdir -p var && chmod 777 -R var
-RUN mkdir -p public/uploads && chmod 777 -R public/uploads
-
-# Install dependencies and generate autoload
-RUN composer install --no-dev --optimize-autoloader
+# Generate autoloader and prepare app
 RUN composer dump-autoload --optimize
+RUN mkdir -p var/cache var/log public/uploads \
+    && chmod -R 777 var public/uploads
 
 # Apache config
 COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 
-# Set final permissions
-RUN chown -R www-data:www-data /var/www/html
-
 EXPOSE 80
 
-CMD apache2-foreground
+CMD ["apache2-foreground"]
