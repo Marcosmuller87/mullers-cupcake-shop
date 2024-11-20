@@ -22,16 +22,24 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy entire project
+# Copy composer files first
+COPY composer.json composer.lock ./
+
+# Set environment variable
+ENV APP_ENV=prod
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+# Install dependencies (without dev)
+RUN composer install --prefer-dist --no-dev --optimize-autoloader --no-scripts
+
+# Copy the rest of the application
 COPY . .
 
-# Install dependencies
-RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader
+# Generate autoload files
+RUN composer dump-autoload --optimize
 
-# Fix permissions and directories
-RUN mkdir -p var/cache var/log \
-    && chown -R www-data:www-data . \
-    && chmod -R 755 .
+# Fix permissions
+RUN chown -R www-data:www-data /var/www/html
 
 # Apache config
 RUN a2enmod rewrite
