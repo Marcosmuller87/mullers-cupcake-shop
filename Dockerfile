@@ -8,9 +8,7 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     zip \
-    unzip \
-    nodejs \
-    npm
+    unzip
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -24,22 +22,22 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy project files
+# Copy files
 COPY . .
 
-# Create var directory and set permissions
-RUN mkdir -p var
-RUN chmod -R 777 var
+# Create var directory with permissions
+RUN mkdir -p var && chmod 777 -R var
+RUN mkdir -p public/uploads && chmod 777 -R public/uploads
 
-# Install dependencies
-RUN composer install --no-dev --optimize-autoloader
+# Install dependencies without scripts
+RUN composer install --no-scripts --no-dev --optimize-autoloader
 
 # Apache config
 COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
 RUN a2enmod rewrite
 
-# Set permissions for Apache
-RUN chown -R www-data:www-data .
+# Set final permissions
+RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
 
