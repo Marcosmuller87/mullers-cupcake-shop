@@ -29,8 +29,9 @@ COPY . .
 RUN mkdir -p var && chmod 777 -R var
 RUN mkdir -p public/uploads && chmod 777 -R public/uploads
 
-# Install dependencies without scripts
-RUN composer install --no-scripts --no-dev --optimize-autoloader
+# Install dependencies and generate autoload
+RUN composer install --no-dev --optimize-autoloader
+RUN composer dump-autoload --optimize
 
 # Apache config
 COPY docker/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
@@ -41,4 +42,4 @@ RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD apache2-foreground
