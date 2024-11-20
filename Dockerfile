@@ -25,23 +25,13 @@ WORKDIR /var/www/html
 # Copy entire project
 COPY . .
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/var
+# Install dependencies
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader
 
-# Install dependencies and generate autoloader
-RUN COMPOSER_ALLOW_SUPERUSER=1 composer install \
-    && composer dump-autoload --optimize \
-    && composer clear-cache
-
-# Create required directories and set permissions
-RUN mkdir -p /var/www/html/var/cache \
-    && mkdir -p /var/www/html/var/log \
-    && mkdir -p /var/www/html/public/uploads \
-    && chown -R www-data:www-data /var/www/html/var \
-    && chown -R www-data:www-data /var/www/html/public/uploads \
-    && chmod -R 777 /var/www/html/var \
-    && chmod -R 777 /var/www/html/public/uploads
+# Fix permissions and directories
+RUN mkdir -p var/cache var/log \
+    && chown -R www-data:www-data . \
+    && chmod -R 755 .
 
 # Apache config
 RUN a2enmod rewrite
